@@ -18,9 +18,11 @@ O dashboard deve estar publicado em HTTPS para funcionar em outros dispositivos.
 
 ## 3. Criar e administrar convidados sem e-mail
 
-No painel **Acessos**, Pablo pode criar uma conta com e-mail, nome, senha inicial e permissão para ver valores; redefinir a senha de convidados; e desativar ou reativar acessos. As senhas devem ter ao menos 12 caracteres e ser compartilhadas por um canal privado. O site não guarda nem exibe as senhas depois da criação.
+No painel **Acessos**, Pablo escolhe entre permitir todos os valores do dashboard ou mostrar somente empréstimos do cartão vinculados a uma pessoa. Para a segunda opção, selecione o mesmo nome usado no campo **De quem foi o empréstimo** dos lançamentos. Assim, o convidado recebe apenas os lançamentos associados a esse nome; o servidor não envia os demais gastos, saldos ou transações para essa conta. Também é possível redefinir senhas e desativar ou reativar acessos. As senhas devem ter ao menos 12 caracteres e ser compartilhadas por um canal privado. O site não guarda nem exibe as senhas depois da criação.
 
-Para ativar esse fluxo, publique a versão atualizada da Edge Function `smart-api` pelo editor em **Edge Functions → smart-api → Code → Deploy updates**. O runtime do Supabase já fornece `SUPABASE_URL`, `SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY`; não copie chaves privadas para o HTML nem para o GitHub. `APP_REDIRECT_URL` não é necessário para criar contas nem redefinir senhas.
+Antes de usar as novas permissões, execute uma vez [`supabase/migrations/20261123_card_loan_access.sql`](supabase/migrations/20261123_card_loan_access.sql) no **SQL Editor** do projeto. Essa migração adiciona as opções de permissão sem apagar os lançamentos salvos.
+
+Depois, publique a versão atualizada da Edge Function `smart-api` pelo editor em **Edge Functions → smart-api → Code → Deploy updates**. O runtime do Supabase já fornece `SUPABASE_URL`, `SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY`; não copie chaves privadas para o HTML nem para o GitHub. `APP_REDIRECT_URL` não é necessário para criar contas nem redefinir senhas.
 
 ## Observações
 

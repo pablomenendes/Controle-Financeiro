@@ -59,6 +59,8 @@ Deno.serve(async (request: Request) => {
       p_email: email,
       p_display_name: displayName,
       p_can_view_values: canViewValues,
+      p_can_view_card_loans: body.canViewCardLoans === true,
+      p_loan_borrower: String(body.loanBorrower || '').trim(),
     })
     if (inviteRowError) return respond({ error: inviteRowError.message }, 400)
 

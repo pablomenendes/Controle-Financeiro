@@ -1,2 +1,2 @@
-[functions.invite-user]
+[functions.smart-api]
 verify_jwt = true

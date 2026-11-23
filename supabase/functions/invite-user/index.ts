@@ -13,10 +13,9 @@ Deno.serve(async (request: Request) => {
   const projectUrl = Deno.env.get('SUPABASE_URL')
   const publicKey = Deno.env.get('SUPABASE_PUBLIC_KEY')
   const serviceKey = Deno.env.get('SUPABASE_SECRET_KEY')
-  const redirectTo = Deno.env.get('APP_REDIRECT_URL')
   const authorization = request.headers.get('Authorization')
-  if (!projectUrl || !publicKey || !serviceKey || !redirectTo || !authorization) {
-    return respond({ error: 'A função de convite não está configurada.' }, 500)
+  if (!projectUrl || !publicKey || !serviceKey || !authorization) {
+    return respond({ error: 'A função de gerenciamento de contas não está configurada.' }, 500)
   }
 
   try {
@@ -29,6 +28,26 @@ Deno.serve(async (request: Request) => {
     }
 
     const body = await request.json()
+    const admin = createClient(projectUrl, serviceKey, { auth: { autoRefreshToken: false, persistSession: false } })
+
+    if (typeof body.password !== 'string' || body.password.length < 12 || body.password.length > 128) {
+      return respond({ error: 'A senha deve ter entre 12 e 128 caracteres.' }, 400)
+    }
+
+    if (body.action === 'reset-password') {
+      const userId = String(body.userId || '')
+      const { data: members, error: membersError } = await caller.rpc('finance_admin_list_members')
+      if (membersError) return respond({ error: membersError.message }, 400)
+      const target = (members || []).find((member: { user_id: string; role: string }) => member.user_id === userId && member.role === 'member')
+      if (!target) return respond({ error: 'Conta de convidado não encontrada.' }, 404)
+
+      const { error } = await admin.auth.admin.updateUserById(userId, { password: body.password })
+      if (error) return respond({ error: error.message }, 400)
+      return respond({ ok: true, message: 'Senha atualizada. Avise a nova senha à pessoa por um canal privado.' }, 200)
+    }
+
+    if (body.action !== 'create') return respond({ error: 'Ação de gerenciamento inválida.' }, 400)
+
     const email = String(body.email || '').trim().toLowerCase()
     const displayName = String(body.displayName || '').trim().slice(0, 80)
     const canViewValues = body.canViewValues === true
@@ -41,15 +60,18 @@ Deno.serve(async (request: Request) => {
     })
     if (inviteRowError) return respond({ error: inviteRowError.message }, 400)
 
-    const admin = createClient(projectUrl, serviceKey, { auth: { autoRefreshToken: false, persistSession: false } })
-    const { error: sendError } = await admin.auth.admin.inviteUserByEmail(email, { redirectTo })
-    if (sendError) {
+    const { error: createError } = await admin.auth.admin.createUser({
+      email,
+      password: body.password,
+      email_confirm: true,
+    })
+    if (createError) {
       await caller.rpc('finance_admin_cancel_invite', { p_email: email })
-      return respond({ error: sendError.message }, 400)
+      return respond({ error: createError.message }, 400)
     }
-    return respond({ ok: true, message: `Convite enviado para ${email}.` }, 200)
+    return respond({ ok: true, message: `Conta criada para ${email}. Entregue a senha inicial à pessoa por um canal privado.` }, 200)
   } catch (error) {
-    return respond({ error: error instanceof Error ? error.message : 'Falha ao enviar o convite.' }, 500)
+    return respond({ error: error instanceof Error ? error.message : 'Falha ao gerenciar a conta.' }, 500)
   }
 })
 

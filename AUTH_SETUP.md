@@ -1,36 +1,36 @@
-# Ativar login e compartilhamento
+# Login e compartilhamento
 
-O dashboard já está conectado ao projeto Supabase e contém o fluxo de login, sincronização, convites e controle de acesso aos valores. A URL e a chave pública publishable ficam no HTML; elas não são segredos. A segurança dos dados depende das políticas/RPCs do SQL e da chave administrativa ficar apenas na Edge Function.
+O dashboard usa o Supabase para proteger os dados, sincronizá-los entre dispositivos e aplicar permissões. O login agora é somente por e-mail e senha; não há cadastro público nem confirmação por e-mail no fluxo normal.
 
-## 1. Configurar o banco
+## 1. Preparar a conta principal
 
-No projeto **Controle Financeiro Brasil** (`https://vyyhlhbsmzoglwfzccri.supabase.co`), abra **SQL Editor → New query** e execute o arquivo [`supabase/schema.sql`](supabase/schema.sql). Depois, abra outra query, substitua `EMAIL_DO_PABLO` pelo e-mail de login no arquivo [`supabase/bootstrap-owner.sql`](supabase/bootstrap-owner.sql) e execute-o para autorizar a conta principal como **Pablo**.
+No projeto **Controle Financeiro Brasil** (`https://vyyhlhbsmzoglwfzccri.supabase.co`), confirme que o esquema já foi instalado. Se não, execute [`supabase/schema.sql`](supabase/schema.sql) no **SQL Editor**.
 
-Não marque “Automatically expose new tables”. Não é necessário criar tabelas manualmente. O SQL cria as tabelas, habilita RLS e bloqueia acesso direto ao banco.
+Em **Authentication → Users**, crie ou localize `pablomenendes10@gmail.com`. Se for criar, defina uma senha forte e marque o e-mail como confirmado; não é necessário enviar e-mail. Depois, execute [`supabase/bootstrap-owner.sql`](supabase/bootstrap-owner.sql) no SQL Editor para vincular a conta ao perfil responsável.
 
-## 2. Ativar a conta Pablo
+Se o endereço já existir, execute o bootstrap para vincular o perfil existente. Se a senha não for conhecida, use a recuperação depois que o limite de e-mails liberar. Remova e recrie uma conta somente se ela for uma conta de teste sem uso; o estado financeiro compartilhado não é apagado ao remover um usuário.
 
-Abra o dashboard e escolha **Recebi um convite / primeiro acesso**. Informe o e-mail autorizado e crie uma senha forte, única, com pelo menos 12 caracteres. Se a confirmação de e-mail estiver ativada, confirme a mensagem que o Supabase enviar e depois entre pela tela de login. Não use a senha `123`.
+Não marque “Automatically expose new tables”. O SQL cria tabelas, habilita RLS e bloqueia acesso direto ao banco.
 
-Se o cadastro informar que o e-mail precisa de confirmação, verifique também Spam/Lixo eletrônico. Confirme que o provedor **Email** está ativo em **Authentication → Sign In / Providers**.
+## 2. Publicação e redirecionamento
 
-## 3. Publicar para acessar em outros dispositivos
+O dashboard deve estar publicado em HTTPS para funcionar em outros dispositivos. Em **Authentication → URL Configuration**, mantenha a URL publicada como **Site URL** e em **Redirect URLs**. O novo fluxo de criação direta não depende de `APP_REDIRECT_URL`.
 
-O arquivo aberto em `file://` funciona apenas no dispositivo onde está salvo e não é um endereço adequado para os links de convite. Publique o `index.html` em um site HTTPS. Em seguida, no Supabase abra **Authentication → URL Configuration** e defina a URL publicada como **Site URL** e em **Redirect URLs**. Atualize a mesma URL no segredo `APP_REDIRECT_URL` da Edge Function.
+## 3. Criar e administrar convidados sem e-mail
 
-## 4. Habilitar convites de convidados
+No painel **Acessos**, Pablo pode criar uma conta com e-mail, nome, senha inicial e permissão para ver valores; redefinir a senha de convidados; e desativar ou reativar acessos. As senhas devem ter ao menos 12 caracteres e ser compartilhadas por um canal privado. O site não guarda nem exibe as senhas depois da criação.
 
-O botão **Acessos** já está no dashboard do responsável, mas o envio de e-mail precisa que a Edge Function seja implantada. Na pasta do projeto, use o Supabase CLI para fazer deploy de `supabase/functions/invite-user` com o nome `invite-user`. Configure os secrets da função no Supabase:
+Para ativar esse fluxo, publique a versão atualizada da Edge Function `invite-user` usando o Supabase CLI. Configure os secrets:
 
-- `SUPABASE_PUBLIC_KEY`: chave publishable pública deste projeto.
-- `SUPABASE_SECRET_KEY`: chave secret do projeto. Ela fica somente nos secrets da função; nunca no HTML, GitHub ou navegador.
-- `APP_REDIRECT_URL`: URL HTTPS publicada do dashboard.
+- `SUPABASE_PUBLIC_KEY`: chave publishable do projeto.
+- `SUPABASE_SECRET_KEY`: chave secret do projeto. Ela fica apenas nos secrets da função; nunca no HTML, GitHub ou navegador.
 
-`SUPABASE_URL` já é fornecida automaticamente ao runtime das Edge Functions. Ao convidar alguém, escolha se essa pessoa poderá ver valores. Usuários sem essa permissão recebem os valores financeiros ocultos e ficam em modo somente leitura.
+`SUPABASE_URL` é fornecida automaticamente ao runtime das Edge Functions. `APP_REDIRECT_URL` não é necessário para criar contas nem redefinir senhas.
 
 ## Observações
 
-- O banco compartilhado é a fonte de dados; o IndexedDB continua sendo um cache local do navegador.
-- No primeiro login em um dispositivo com dados locais, o dashboard pergunta se você deseja migrá-los. Só confirme se esses são os dados corretos; isso envia os lançamentos ao banco compartilhado.
-- Se o SQL ainda não tiver sido executado, o login não encontrará o perfil autorizado. Execute os dois arquivos SQL antes de ativar a conta.
-- Guarde a senha do banco e qualquer chave `secret` fora do código-fonte.
+- Apenas o responsável cria contas; visitantes não conseguem se cadastrar para acessar o dashboard.
+- Usuários sem permissão para ver valores recebem uma visão somente leitura com os valores ocultos.
+- O banco compartilhado é a fonte de dados; o IndexedDB continua como cache local do navegador.
+- No primeiro login de um dispositivo com dados locais, o dashboard pergunta se deseja migrá-los. Só confirme se forem os dados corretos.
+- A chave `secret` do Supabase deve permanecer somente nos secrets da Edge Function.

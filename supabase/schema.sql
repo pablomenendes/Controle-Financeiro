@@ -169,7 +169,9 @@ begin
     select coalesce(jsonb_agg(jsonb_build_object(
       'type',loan->'type','card',loan->'card','category',loan->'category','borrower',loan->'borrower',
       'reimbursed',loan->'reimbursed','projected',loan->'projected','amount',loan->'amount',
-      'date',loan->'date','repaidDate',loan->'repaidDate','description',loan->'description','cardName',loan->'cardName'
+      'date',loan->'date','statementDate',loan->'statementDate','cardDueDate',loan->'cardDueDate',
+      'installmentNumber',loan->'installmentNumber','installmentTotal',loan->'installmentTotal',
+      'repaidDate',loan->'repaidDate','description',loan->'description','cardName',loan->'cardName'
     ) order by loan->>'date'), '[]'::jsonb) into visible_loans
     from jsonb_array_elements(coalesce(payload->'transactions','[]'::jsonb)) as entry(loan)
     where loan->>'type' = 'out'

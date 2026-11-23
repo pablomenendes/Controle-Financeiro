@@ -20,12 +20,7 @@ O dashboard deve estar publicado em HTTPS para funcionar em outros dispositivos.
 
 No painel **Acessos**, Pablo pode criar uma conta com e-mail, nome, senha inicial e permissão para ver valores; redefinir a senha de convidados; e desativar ou reativar acessos. As senhas devem ter ao menos 12 caracteres e ser compartilhadas por um canal privado. O site não guarda nem exibe as senhas depois da criação.
 
-Para ativar esse fluxo, publique a versão atualizada da Edge Function `invite-user` usando o Supabase CLI. Configure os secrets:
-
-- `SUPABASE_PUBLIC_KEY`: chave publishable do projeto.
-- `SUPABASE_SECRET_KEY`: chave secret do projeto. Ela fica apenas nos secrets da função; nunca no HTML, GitHub ou navegador.
-
-`SUPABASE_URL` é fornecida automaticamente ao runtime das Edge Functions. `APP_REDIRECT_URL` não é necessário para criar contas nem redefinir senhas.
+Para ativar esse fluxo, publique a versão atualizada da Edge Function `invite-user` pelo editor em **Edge Functions → invite-user → Code → Deploy updates**. O runtime do Supabase já fornece `SUPABASE_URL`, `SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY`; não copie chaves privadas para o HTML nem para o GitHub. `APP_REDIRECT_URL` não é necessário para criar contas nem redefinir senhas.
 
 ## Observações
 

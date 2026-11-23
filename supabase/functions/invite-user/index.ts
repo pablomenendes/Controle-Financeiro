@@ -11,8 +11,10 @@ Deno.serve(async (request: Request) => {
   if (request.method !== 'POST') return respond({ error: 'Método não permitido.' }, 405)
 
   const projectUrl = Deno.env.get('SUPABASE_URL')
-  const publicKey = Deno.env.get('SUPABASE_PUBLIC_KEY')
-  const serviceKey = Deno.env.get('SUPABASE_SECRET_KEY')
+  // Supabase supplies these keys in the Edge Functions runtime. Keep legacy
+  // custom names as fallbacks for projects that already configured them.
+  const publicKey = Deno.env.get('SUPABASE_ANON_KEY') || Deno.env.get('SUPABASE_PUBLIC_KEY')
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SUPABASE_SECRET_KEY')
   const authorization = request.headers.get('Authorization')
   if (!projectUrl || !publicKey || !serviceKey || !authorization) {
     return respond({ error: 'A função de gerenciamento de contas não está configurada.' }, 500)

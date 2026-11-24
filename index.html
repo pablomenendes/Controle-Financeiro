@@ -111,48 +111,48 @@
     body.light .menu-action { color:#1e293b; border-color:#e2e8f0 }
     body.light .menu-action:hover { background:#eef2ff; color:#3730a3 }
     body.light .menu-action span { color:#64748b }
-    /* Liquid-glass treatment for the floating toolbar and navigation controls. */
-    #dashboardHeader button:not(.hint-btn), #periodControls, #toolsMenu .menu-group {
-      -webkit-backdrop-filter:blur(24px) saturate(180%);
-      backdrop-filter:blur(24px) saturate(180%);
-      background-color:rgba(30,41,59,.58);
-      background-image:linear-gradient(145deg,rgba(255,255,255,.2),rgba(255,255,255,.065) 46%,rgba(99,102,241,.09));
-      border-color:rgba(203,213,225,.32);
-      box-shadow:inset 0 1.5px 0 rgba(255,255,255,.34),inset 0 -1px 0 rgba(255,255,255,.07),0 10px 28px rgba(2,6,23,.24);
+    /* Refraction is applied only while a control is pressed/selected. */
+    #dashboardHeader button:not(.hint-btn), #periodControls button, #toolsMenu .menu-action {
+      transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease;
     }
-    #dashboardHeader button:not(.hint-btn), #periodControls { position:relative; isolation:isolate; }
-    #dashboardHeader button:not(.hint-btn)::after {
-      content:"";position:absolute;inset:1px;border-radius:inherit;pointer-events:none;
-      background:linear-gradient(115deg,rgba(255,255,255,.3),transparent 38%,transparent 65%,rgba(165,180,252,.16));
-      opacity:.82;transition:opacity .2s ease,transform .2s ease;
+    #dashboardHeader button:not(.hint-btn):active, #dashboardHeader .period-btn.tab-active,
+    #toolsMenu .menu-action:active, #dashboardApp:has(#toolsMenu[open]) #toolsMenuOpen {
+      background-image:linear-gradient(135deg,rgba(255,255,255,.24),rgba(255,255,255,.065) 52%,rgba(129,140,248,.13));
+      -webkit-backdrop-filter:url(#liquid-refraction) blur(14px) saturate(160%);
+      backdrop-filter:url(#liquid-refraction) blur(14px) saturate(160%);
+      border-color:rgba(226,232,240,.44);
+      box-shadow:0 8px 24px rgba(2,6,23,.2),inset 0 1px 1px rgba(255,255,255,.55),inset 0 -2px 6px rgba(255,255,255,.16),inset 0 0 18px rgba(255,255,255,.09);
+      transform:scale(.985);
     }
-    #dashboardHeader button:not(.hint-btn):hover::after { opacity:1;transform:translateY(-1px) }
-    #dashboardHeader button:not(.hint-btn):hover { transform:translateY(-1px);border-color:rgba(199,210,254,.58);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.4),0 13px 30px rgba(2,6,23,.3) }
-    #dashboardHeader #importOpen { border:1px solid rgba(199,210,254,.3);background-color:rgba(99,102,241,.82);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 8px 24px rgba(79,70,229,.2) }
-    #dashboardHeader #periodControls { border-color:rgba(203,213,225,.34);background-color:rgba(15,23,42,.66) }
-    #toolsMenu .menu-group { display:grid;gap:8px;padding:8px;border-color:rgba(203,213,225,.25);border-radius:20px;background-color:rgba(15,23,42,.62) }
-    #toolsMenu .menu-action { position:relative;overflow:hidden;border:1px solid rgba(203,213,225,.25);border-radius:14px;background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,.045) 52%,rgba(99,102,241,.08));box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 6px 15px rgba(2,6,23,.15); }
-    #toolsMenu .menu-action:hover { border-color:rgba(165,180,252,.58);background:linear-gradient(135deg,rgba(129,140,248,.26),rgba(255,255,255,.09));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 9px 20px rgba(2,6,23,.24);transform:translateY(-1px) }
-    body.light #dashboardHeader button:not(.hint-btn),body.light #periodControls,body.light #toolsMenu .menu-group {
-      -webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%);
-      background-color:rgba(255,255,255,.72);
-      background-image:linear-gradient(145deg,rgba(255,255,255,.98),rgba(255,255,255,.7) 48%,rgba(224,231,255,.55));
-      border-color:rgba(100,116,139,.35);
-      box-shadow:inset 0 1.5px 0 #fff,inset 0 -1px 0 rgba(148,163,184,.18),0 10px 26px rgba(15,23,42,.12);
+    #dashboardHeader #importOpen:active { background-color:rgba(99,102,241,.55) }
+    #toolsMenu .menu-action:active { border-radius:14px;background-color:rgba(148,163,184,.16) }
+    body.light #dashboardHeader button:not(.hint-btn):active,body.light #dashboardHeader .period-btn.tab-active,
+    body.light #toolsMenu .menu-action:active,body.light #dashboardApp:has(#toolsMenu[open]) #toolsMenuOpen {
+      background-image:linear-gradient(135deg,rgba(255,255,255,.72),rgba(255,255,255,.34) 52%,rgba(199,210,254,.28));
+      border-color:rgba(71,85,105,.42);
+      box-shadow:0 8px 22px rgba(15,23,42,.12),inset 0 1px 1px rgba(255,255,255,.95),inset 0 -2px 6px rgba(255,255,255,.55),inset 0 0 18px rgba(255,255,255,.35);
     }
-    body.light #dashboardHeader button:not(.hint-btn)::after { background:linear-gradient(115deg,rgba(255,255,255,.98),transparent 42%,transparent 68%,rgba(99,102,241,.18)) }
-    body.light #dashboardHeader button:not(.hint-btn):hover { border-color:rgba(79,70,229,.42);box-shadow:inset 0 1.5px 0 #fff,0 13px 28px rgba(15,23,42,.15) }
-    body.light #dashboardHeader #importOpen { background-color:rgba(79,70,229,.92);color:#fff!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.38),0 8px 24px rgba(79,70,229,.17) }
-    body.light #dashboardHeader #periodControls { border-color:rgba(148,163,184,.38);background-color:rgba(255,255,255,.62) }
-    body.light #toolsMenu .menu-group { border-color:rgba(100,116,139,.28);background-color:rgba(241,245,249,.76) }
-    body.light #toolsMenu .menu-action { border-color:rgba(100,116,139,.3);background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(248,250,252,.78) 52%,rgba(224,231,255,.42));box-shadow:inset 0 1px 0 #fff,0 6px 15px rgba(15,23,42,.08) }
-    body.light #toolsMenu .menu-action:hover { border-color:rgba(79,70,229,.5);background:linear-gradient(135deg,rgba(224,231,255,.95),rgba(255,255,255,.98));box-shadow:inset 0 1px 0 #fff,0 9px 20px rgba(15,23,42,.13);transform:translateY(-1px) }
+    body.light #dashboardHeader #importOpen:active { background-color:rgba(79,70,229,.72);color:#fff!important }
+    #periodControls { background-color:rgba(15,23,42,.22)!important }
+    body.light #periodControls { background-color:rgba(255,255,255,.28)!important }
+    #toolsMenu .menu-group { background:rgba(2,6,23,.16) }
+    body.light #toolsMenu .menu-group { background:rgba(241,245,249,.28) }
     @media (prefers-reduced-transparency:reduce) {
-      #dashboardHeader button:not(.hint-btn),#periodControls,#toolsMenu .menu-group { -webkit-backdrop-filter:none;backdrop-filter:none }
+      #dashboardHeader button:not(.hint-btn):active,#dashboardHeader .period-btn.tab-active,#toolsMenu .menu-action:active { -webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%) }
     }
   </style>
 </head>
 <body class="min-h-screen bg-slate-950 text-slate-100 antialiased selection:bg-indigo-500/30">
+  <!-- SVG usado pelo backdrop-filter apenas no estado pressionado/selecionado. -->
+  <svg aria-hidden="true" class="pointer-events-none absolute h-0 w-0" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="liquid-refraction" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.015 0.015" numOctaves="2" seed="2" result="noise" />
+        <feGaussianBlur in="noise" stdDeviation="2" result="smoothNoise" />
+        <feDisplacementMap in="SourceGraphic" in2="smoothNoise" scale="28" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
   <section id="authScreen" class="fixed inset-0 z-[100] flex min-h-screen items-center justify-center overflow-y-auto px-4 py-10">
     <div class="card soft-shadow w-full max-w-md rounded-2xl p-6 sm:p-8">
       <div class="mb-7 flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-2xl bg-indigo-500/15 text-indigo-300 ring-1 ring-indigo-400/20"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18M7 14l4-4 4 4 6-7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><p class="text-xs font-semibold uppercase tracking-[.18em] text-slate-500">Finanças pessoais</p><h1 class="mt-1 text-xl font-semibold text-slate-100">Entrar no dashboard</h1></div></div>

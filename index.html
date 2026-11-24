@@ -138,6 +138,8 @@
     #dashboardHeader button:not(.hint-btn), #periodControls button, #toolsMenu .menu-action {
       transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease;
     }
+    #dashboardHeader .period-btn:focus { outline:none }
+    #dashboardHeader .period-btn:focus-visible:not(.tab-active) { outline:2px solid rgba(129,140,248,.72);outline-offset:2px }
     #dashboardHeader button:not(.hint-btn):active, #dashboardHeader .period-btn.tab-active,
     #toolsMenu .menu-action:active, #dashboardApp:has(#toolsMenu[open]) #toolsMenuOpen {
       background-image:linear-gradient(135deg,rgba(255,255,255,.24),rgba(255,255,255,.065) 52%,rgba(129,140,248,.13));

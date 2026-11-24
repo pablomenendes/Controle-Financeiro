@@ -22,6 +22,8 @@ No painel **Acessos**, Pablo escolhe entre permitir todos os valores do dashboar
 
 Antes de usar as novas permissões, execute uma vez [`supabase/migrations/20261123_card_loan_access.sql`](supabase/migrations/20261123_card_loan_access.sql) no **SQL Editor** do projeto. Essa migração adiciona as opções de permissão sem apagar os lançamentos salvos. Depois, execute [`supabase/migrations/20261123_card_loan_dates.sql`](supabase/migrations/20261123_card_loan_dates.sql) para permitir que os acessos limitados recebam a data de vencimento e, opcionalmente, a data original do relatório, sem expor outras informações.
 
+Se o site mostrar que a função `finance_admin_update_member` não foi encontrada, execute [`supabase/migrations/20261123_fix_admin_update_member.sql`](supabase/migrations/20261123_fix_admin_update_member.sql) no **SQL Editor**. Essa migração recria somente a função de atualização de permissões e recarrega o cache da API; não altera usuários nem lançamentos.
+
 Depois, publique a versão atualizada da Edge Function `smart-api` pelo editor em **Edge Functions → smart-api → Code → Deploy updates**. O runtime do Supabase já fornece `SUPABASE_URL`, `SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY`; não copie chaves privadas para o HTML nem para o GitHub. `APP_REDIRECT_URL` não é necessário para criar contas nem redefinir senhas.
 
 ## Observações

@@ -179,9 +179,10 @@
     .glass-tabs > button:focus-visible:not(.tab-active) { outline:2px solid rgba(129,140,248,.72);outline-offset:2px }
     .glass-tabs > button.tab-active { color:#e2e8f0!important;background:transparent!important;border-color:transparent!important;box-shadow:none!important;transform:none!important }
     .glass-tab-slider { position:absolute;top:0;left:0;z-index:0;pointer-events:none;border:1px solid rgba(226,232,240,.23);border-radius:.625rem;background-color:rgba(148,163,184,.1);background-image:linear-gradient(135deg,rgba(255,255,255,.23),rgba(255,255,255,.055) 52%,rgba(129,140,248,.14));-webkit-backdrop-filter:url(#liquid-refraction) blur(14px) saturate(160%);backdrop-filter:url(#liquid-refraction) blur(14px) saturate(160%);box-shadow:0 5px 16px rgba(2,6,23,.14),inset 0 1px 1px rgba(255,255,255,.3),inset 0 -2px 5px rgba(255,255,255,.1);opacity:0;transform:translate3d(4px,4px,0);transition:transform .42s cubic-bezier(.2,.8,.2,1),width .42s cubic-bezier(.2,.8,.2,1),height .42s cubic-bezier(.2,.8,.2,1),opacity .18s ease;will-change:transform,width,height }
-    body.light .glass-tabs { background-color:rgba(255,255,255,.28)!important }
-    body.light .glass-tabs > button.tab-active { color:#0f172a!important }
-    body.light .glass-tab-slider { border-color:rgba(100,116,139,.24);background-color:rgba(255,255,255,.42);background-image:linear-gradient(135deg,rgba(255,255,255,.85),rgba(255,255,255,.42) 52%,rgba(199,210,254,.32));box-shadow:0 5px 16px rgba(15,23,42,.1),inset 0 1px 1px rgba(255,255,255,.85),inset 0 -2px 5px rgba(148,163,184,.15) }
+    body.light .glass-tabs { background-color:rgba(203,213,225,.54)!important;border-color:#94a3b8!important }
+    body.light .glass-tabs > button:not(.tab-active) { color:#334155!important }
+    body.light .glass-tabs > button.tab-active { color:#1e1b4b!important }
+    body.light .glass-tab-slider { border-color:rgba(79,70,229,.38);background-color:rgba(199,210,254,.72);background-image:linear-gradient(135deg,rgba(255,255,255,.94),rgba(224,231,255,.88) 52%,rgba(165,180,252,.48));box-shadow:0 4px 12px rgba(51,65,85,.14),inset 0 1px 1px rgba(255,255,255,.95),inset 0 -2px 5px rgba(79,70,229,.12) }
     #toolsMenu .menu-group { background:rgba(2,6,23,.16) }
     body.light #toolsMenu .menu-group { background:rgba(241,245,249,.28) }
     @media (prefers-reduced-transparency:reduce) {

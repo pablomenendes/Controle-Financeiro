@@ -93,13 +93,13 @@
     body.light #kpi-income { color:#047857!important }
     body.light #kpi-expense { color:#be123c!important }
     body.light #kpi-savings { color:#6d28d9!important }
-    body.light #balance-change,body.light #income-change { color:#047857!important }
-    body.light #expense-change { color:#be123c!important }
     body.light .text-indigo-300,body.light .text-indigo-400 { color:#4338ca!important }
     body.light .text-violet-300,body.light .text-violet-400 { color:#6d28d9!important }
     body.light .text-emerald-300,body.light .text-emerald-400 { color:#047857!important }
     body.light .text-rose-300,body.light .text-rose-400 { color:#be123c!important }
-    body.light .text-amber-200,body.light .text-amber-300 { color:#92400e!important }
+    body.light .text-amber-100,body.light .text-amber-200,body.light .text-amber-300 { color:#92400e!important }
+    body.light .text-sky-300 { color:#0369a1!important }
+    body.light .text-orange-300 { color:#c2410c!important }
     body.light .bg-indigo-500 { background-color:#4f46e5!important;color:#fff!important }
     body.light dialog { border-color:#cbd5e1;box-shadow:0 24px 70px rgba(15,23,42,.2) }
     body.light dialog .text-slate-400 { color:#475569!important }
@@ -454,7 +454,7 @@
       document.getElementById('kpi-income').textContent=brl.format(income);
       document.getElementById('kpi-expense').textContent=brl.format(expense);
       const hasIncome=current.some(item=>item.type==='in'&&!item.projected),hasExpense=current.some(item=>item.type==='out'&&!item.projected);
-      document.getElementById('kpi-savings').textContent=hasIncome&&hasExpense?`${Math.max(0,((income-expense)/income)*100).toFixed(1).replace('.',',')}%`:'—';
+      document.getElementById('kpi-savings').textContent=hasIncome&&hasExpense?`${((income-expense)/income*100).toFixed(1).replace('.',',')}%`:'—';
       const incomeChange=percentChange(income,prevIncome),expenseChange=percentChange(expense,prevExpense),balanceChange=percentChange(income-expense,prevIncome-prevExpense);
       setChange('income-change',incomeChange,income===prevIncome?null:income>prevIncome);
       setChange('expense-change',expenseChange,expense===prevExpense?null:expense<prevExpense);
@@ -467,7 +467,8 @@
       const selected=periodTransactions();
       const income=months.map(d=>sum(selected.filter(t=>monthKey(getDate(t))===monthKey(d)),'in'));
       const expense=months.map(d=>sum(selected.filter(t=>monthKey(getDate(t))===monthKey(d)),'out'));
-      document.getElementById('cashflowPeriodNote').classList.toggle('hidden',months.length!==1);
+      const monthsWithData=new Set(selected.filter(item=>['in','out'].includes(item.type)).map(item=>monthKey(getDate(item))));
+      document.getElementById('cashflowPeriodNote').classList.toggle('hidden',monthsWithData.size!==1);
       if(cashChart) cashChart.destroy();
       cashChart=new Chart(document.getElementById('cashflowChart'),{type:'bar',data:{labels,datasets:[{label:'Receitas',data:income,backgroundColor:'#34d399',borderRadius:5,borderSkipped:false,maxBarThickness:30,grouped:true},{label:'Despesas',data:expense,backgroundColor:'#fb7185',borderRadius:5,borderSkipped:false,maxBarThickness:30,grouped:true}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:'#0f172a',borderColor:'#334155',borderWidth:1,padding:12,displayColors:true,callbacks:{label:c=>`${c.dataset.label}: ${brl.format(c.raw)}`}}},scales:{x:{grid:{display:false},border:{display:false},ticks:{color:'#64748b',font:{family:'DM Sans'}}},y:{beginAtZero:true,grid:{color:'rgba(51,65,85,.35)'},border:{display:false},ticks:{color:'#64748b',font:{family:'DM Sans'},callback:v=>{const value=Number(v);return value>=1000?`R$ ${(value/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})} mil`:`R$ ${value.toLocaleString('pt-BR')}`;}}}}}});
     }

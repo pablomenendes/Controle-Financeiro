@@ -58,6 +58,9 @@
     body.light dialog { color:#0f172a }
     body.light dialog h2, body.light dialog h3, body.light dialog label { color:#0f172a }
     body.light { background:#f1f5f9;color:#0f172a }
+    body, #auroraBackground, .card, .glass-tabs, dialog, button, input, select, textarea, .transaction-row, .menu-action { transition-property:background-color,color,border-color,box-shadow,opacity;transition-duration:180ms;transition-timing-function:ease; }
+    ::view-transition-old(root), ::view-transition-new(root) { animation-duration:180ms;animation-timing-function:ease-in-out }
+    @media (prefers-reduced-motion:reduce) { body, #auroraBackground, .card, .glass-tabs, dialog, button, input, select, textarea, .transaction-row, .menu-action { transition-duration:0ms!important; } }
     body.light #auroraBackground {
       background:
         radial-gradient(ellipse 43% 33% at 16% 20%,rgba(45,212,191,.27),transparent 74%),
@@ -550,9 +553,16 @@
     function renderCategories() {
       const totals={}; periodTransactions().filter(t=>t.type==='out').forEach(t=>transactionParts(t).forEach(part=>totals[part.category]=(totals[part.category]||0)+Number(part.amount)));
       const sorted=Object.entries(totals).sort((a,b)=>b[1]-a[1]);
-      if(donutChart) donutChart.destroy();
-      const lightMode=document.body.classList.contains('light');
-      donutChart=new Chart(document.getElementById('categoryChart'),{type:'doughnut',data:{labels:sorted.map(x=>x[0]),datasets:[{data:sorted.map(x=>x[1]),backgroundColor:sorted.map((_,i)=>palette[i%palette.length]),borderColor:lightMode?'#ffffff':'#0f172a',borderWidth:3,hoverOffset:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:lightMode?'#ffffff':'#0f172a',titleColor:lightMode?'#0f172a':'#f8fafc',bodyColor:lightMode?'#334155':'#cbd5e1',borderColor:lightMode?'#cbd5e1':'#334155',borderWidth:1,padding:10,callbacks:{label:c=>`${c.label}: ${brl.format(c.raw)}`}}},cutout:'72%'}});
+      const lightMode=document.body.classList.contains('light'),labels=sorted.map(x=>x[0]),values=sorted.map(x=>x[1]),colors=sorted.map((_,i)=>palette[i%palette.length]),borderColor=lightMode?'#ffffff':'#0f172a';
+      const tooltipColors={backgroundColor:lightMode?'#ffffff':'#0f172a',titleColor:lightMode?'#0f172a':'#f8fafc',bodyColor:lightMode?'#334155':'#cbd5e1',borderColor:lightMode?'#cbd5e1':'#334155'};
+      if(donutChart){
+        donutChart.data.labels=labels;
+        Object.assign(donutChart.data.datasets[0],{data:values,backgroundColor:colors,borderColor});
+        Object.assign(donutChart.options.plugins.tooltip,tooltipColors);
+        donutChart.update('none');
+      }else{
+        donutChart=new Chart(document.getElementById('categoryChart'),{type:'doughnut',data:{labels,datasets:[{data:values,backgroundColor:colors,borderColor,borderWidth:3,hoverOffset:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...tooltipColors,borderWidth:1,padding:10,callbacks:{label:c=>`${c.label}: ${brl.format(c.raw)}`}}},cutout:'72%'}});
+      }
       const total=sorted.reduce((a,x)=>a+x[1],0);
       document.getElementById('categoryLegend').innerHTML=sorted.length?sorted.slice(0,6).map(([name,value],i)=>`<div class="flex items-center justify-between gap-3 text-sm"><span class="flex min-w-0 items-center gap-2.5 text-slate-400"><i class="h-2 w-2 shrink-0 rounded-full" style="background:${palette[i%palette.length]}"></i><span class="truncate">${escapeHtml(name)}</span></span><span class="shrink-0 font-medium text-slate-200">${total?(value/total*100).toFixed(0):0}%</span></div>`).join(''):'<p class="text-sm text-slate-500">Sem despesas neste período.</p>';
     }
@@ -616,7 +626,7 @@
 document.getElementById('showStatementDate').addEventListener('change',e=>{showStatementDate=e.currentTarget.checked;renderCardLoans();});
     addHint(document.querySelector('#importDialog h2'),'import'); addHint(document.querySelector('#manualDialog h2'),'manual');
     function syncThemeControl(){const group=document.getElementById('themeToggle'),light=document.body.classList.contains('light');group.querySelectorAll('[data-theme-mode]').forEach(button=>{const active=button.dataset.themeMode===(light?'light':'dark');button.classList.toggle('tab-active',active);button.classList.toggle('text-slate-400',!active);button.setAttribute('aria-checked',String(active));});requestAnimationFrame(()=>updateGlassTabSlider(group));}
-    document.getElementById('themeToggle').addEventListener('click',event=>{const button=event.target.closest('[data-theme-mode]');if(!button)return;const light=button.dataset.themeMode==='light';document.body.classList.toggle('light',light);localStorage.setItem('financeTheme',light?'light':'dark');syncThemeControl();renderCategories();});
+    document.getElementById('themeToggle').addEventListener('click',event=>{const button=event.target.closest('[data-theme-mode]');if(!button)return;const light=button.dataset.themeMode==='light',applyTheme=()=>{document.body.classList.toggle('light',light);localStorage.setItem('financeTheme',light?'light':'dark');syncThemeControl();renderCategories();};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.startViewTransition(applyTheme);else applyTheme();});
     if(localStorage.getItem('financeTheme')==='light')document.body.classList.add('light');syncThemeControl();
     const helpTitles={balance:'Saldo líquido do período',income:'Receitas do período',expense:'Despesas do período',savings:'Taxa de poupança',period:'Filtro de período',cashflow:'Fluxo de caixa',categories:'Despesas por categoria',transactions:'Transações recentes',insights:'Insights do período',import:'Importar dados',manual:'Nova transação',fieldDate:'Data',fieldType:'Tipo de movimentação',fieldDescription:'Descrição',fieldCategory:'Categoria',fieldAmount:'Valor'};
     document.addEventListener('click',e=>{const b=e.target.closest('[data-info]');if(!b)return;const key=b.dataset.info;document.getElementById('infoTitle').textContent=helpTitles[key]||'Sobre este item';document.getElementById('infoText').textContent=helpText[key]||'Informação deste item no dashboard.';document.getElementById('infoDialog').showModal();});

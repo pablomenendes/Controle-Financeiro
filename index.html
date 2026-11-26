@@ -125,13 +125,13 @@
       body.light .mobile-collapse > summary { color:#0f172a;background:rgba(255,255,255,.78);border-color:#cbd5e1 }
     }
     @media (min-width:768px) { .mobile-collapse > section { display:block;margin-top:0!important } }
-    .import-dialog { width:min(95vw,1200px);max-width:1200px;max-height:90vh;overflow:hidden;box-sizing:border-box }
+    .import-dialog { width:min(95vw,1200px);max-width:1200px;max-height:95vh;overflow:hidden;box-sizing:border-box }
     #importDialog[open] { display:flex }
-    .import-modal-shell { display:flex;flex-direction:column;width:100%;max-height:90vh;min-height:0;overflow:hidden;box-sizing:border-box;padding:clamp(12px,2vw,24px) }
+    .import-modal-shell { display:flex;flex-direction:column;width:100%;max-height:95vh;min-height:0;overflow:hidden;box-sizing:border-box;padding:clamp(12px,2vw,24px) }
     #importDialog:not(.has-preview) .import-modal-shell { overflow-y:auto }
-    #importDialog.has-preview .import-modal-shell { height:calc(90vh - 2px) }
+    #importDialog.has-preview .import-modal-shell { height:calc(95vh - 2px) }
     #importDialog.has-preview #importPreview:not(.hidden) { display:flex }
-    #importDialog.has-preview #importControls { display:grid;flex:0 1 auto;min-height:0;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 12px }
+    #importDialog.has-preview #importControls { display:grid;flex:0 0 auto;min-height:0;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 12px }
     #importDialog.has-preview #importControls > label { margin:0!important }
     #importDialog.has-preview #importControls > label:nth-of-type(2),
     #importDialog.has-preview #importControls > label:nth-of-type(3) { grid-column:1/-1 }
@@ -141,7 +141,7 @@
     #importDialog.has-preview #fileInput { padding:8px!important }
     #importDialog.has-preview #csvInput { height:100px!important;min-height:100px!important }
     #importDialog.has-preview #importControls details { margin-top:8px!important;padding:8px!important }
-    .import-preview { flex:1 1 0;flex-direction:column;min-height:112px;overflow:hidden }
+    .import-preview { flex:1 1 0;flex-direction:column;min-height:180px;overflow:hidden }
     .import-preview-heading { min-width:0 }
     .preview-count { display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;min-width:0;max-width:100% }
     .preview-count-chip { display:inline-flex;align-items:center;max-width:100%;border:1px solid rgba(148,163,184,.2);border-radius:999px;background:rgba(15,23,42,.55);padding:4px 9px;color:#94a3b8;font-size:11px;line-height:1.35;overflow-wrap:anywhere }
@@ -166,7 +166,7 @@
     @media (max-width:1280px) {
       .import-preview-scroll { overflow-x:hidden!important }
       #importDialog.has-preview .import-modal-shell { padding:12px }
-      #importDialog.has-preview .import-preview { min-height:96px }
+      #importDialog.has-preview .import-preview { min-height:140px }
       #importDialog.has-preview #importControls { grid-template-columns:minmax(0,1fr) }
       #importDialog.has-preview .import-preview-heading { margin-bottom:8px!important }
       .import-preview-table,.import-preview-table tbody { display:block;width:100%;min-width:0 }

@@ -259,8 +259,8 @@
     body.light .glass-tabs > button:not(.tab-active) { color:#334155!important }
     body.light .glass-tabs > button.tab-active { color:#1e1b4b!important }
     body.light .glass-tab-slider { border-color:rgba(79,70,229,.42);background-color:rgba(199,210,254,.82);background-image:linear-gradient(135deg,rgba(255,255,255,.97),rgba(224,231,255,.9) 52%,rgba(165,180,252,.55));box-shadow:0 5px 15px rgba(51,65,85,.17),inset 0 1px 1px rgba(255,255,255,.98),inset 0 -2px 5px rgba(79,70,229,.15) }
-    #dashboardHeader > div:nth-child(2) > div:first-child { order:2;justify-content:flex-end }
-    #dashboardHeader > div:nth-child(2) > div:last-child { order:1;justify-content:flex-start }
+    #dashboardHeader > div:nth-child(2) > div:first-child { order:1;justify-content:flex-start }
+    #dashboardHeader > div:nth-child(2) > div:last-child { order:2;justify-content:flex-end }
     @media (prefers-reduced-transparency:reduce) {
       #dashboardHeader button:not(.hint-btn):active:not(.period-btn),.profile-action:active { -webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%) }
       .glass-tab-slider,.sidebar-glass-slider { -webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%) }
@@ -274,7 +274,7 @@
     #dashboardSidebar.is-expanded { width:204px;align-items:stretch }
     body.sidebar-expanded #dashboardApp { width:calc(100% - 236px);margin-left:232px }
     .sidebar-brand,.sidebar-link { display:flex;align-items:center;justify-content:center;color:#94a3b8;transition:background .2s,color .2s,transform .2s,border-color .2s }
-    .sidebar-brand { width:42px;height:42px;flex:none;border-radius:15px;background:linear-gradient(145deg,rgba(99,102,241,.26),rgba(56,189,248,.1));color:#a5b4fc }
+    .sidebar-brand { display:grid;place-items:center;align-self:center;box-sizing:border-box;appearance:none;width:42px;height:42px;flex:none;padding:0;border:0;border-radius:15px;background:linear-gradient(145deg,rgba(99,102,241,.26),rgba(56,189,248,.1));color:#a5b4fc }
     .sidebar-brand svg { width:22px;height:22px }
     .sidebar-nav { position:relative;display:flex;flex:1;flex-direction:column;align-items:center;gap:8px;width:100% }
     .sidebar-link { position:relative;z-index:1;flex-direction:column;gap:0;width:46px;min-height:46px;border-radius:15px;font-size:12px;line-height:1.2;white-space:nowrap }
@@ -374,6 +374,8 @@
     </div>
   </section>
   <script>
+    // Evita que um erro de carregamento do JavaScript envie credenciais pela query string do formulário.
+    document.getElementById('loginForm')?.addEventListener('submit', event => event.preventDefault(), true);
     document.addEventListener('click', event => {
       const button = event.target.closest('[data-password-toggle]');
       if (!button) return;
@@ -975,7 +977,7 @@ document.getElementById('showStatementDate').addEventListener('change',e=>{showS
       msg.textContent='';
     }
     async function explainFunctionError(error){if(error?.name==='FunctionsFetchError')return 'Não foi possível conectar à Edge Function “smart-api”. Confirme se o último deploy está ativo e atualize o site. Detalhe: '+(error.message||'falha de conexão');if(error?.context){const status=error.context.status;let detail='';try{const body=await error.context.clone().json();detail=body?.error||body?.message||'';}catch{}return `A Edge Function respondeu com erro${status?` (${status})`:''}${detail?`: ${detail}`:'. Verifique os logs da função no Supabase.'}`;}return error?.message||'Não foi possível concluir a operação.';}
-        const initialUrl=new URL(window.location.href);if(initialUrl.searchParams.has('password')||initialUrl.searchParams.has('email')){initialUrl.searchParams.delete('password');initialUrl.searchParams.delete('email');window.history.replaceState(window.history.state,'',`${initialUrl.pathname}${initialUrl.search}${initialUrl.hash}`);document.getElementById('authMessage').textContent='Removi dados de login da barra de endereço por segurança. Digite seu e-mail e senha nos campos abaixo.';}
+        const initialUrl=new URL(window.location.href);if(initialUrl.searchParams.has('password')||initialUrl.searchParams.has('email')){initialUrl.searchParams.delete('password');initialUrl.searchParams.delete('email');const safeQuery=initialUrl.searchParams.size?`?${initialUrl.searchParams.toString()}`:'';window.history.replaceState(window.history.state,'',`${initialUrl.pathname}${safeQuery}${initialUrl.hash}`);document.getElementById('authMessage').textContent='Removi dados de login da barra de endereço por segurança. Digite seu e-mail e senha nos campos abaixo.';}
     async function startAuthentication(){if(!supabaseClient){document.getElementById('authMessage').textContent='Não foi possível carregar o Supabase. Verifique sua conexão e atualize a página.';return;}await databaseInitialization;const recovery=location.hash.includes('type=recovery'),{data:{session}}=await supabaseClient.auth.getSession();if(session){await openAuthenticatedDashboard(session);if(recovery){history.replaceState(history.state,'',`${location.pathname}${location.search}`);document.getElementById('ownPasswordForm').reset();document.getElementById('ownPasswordMessage').textContent='';document.getElementById('ownPasswordDialog').showModal();}}}
     document.getElementById('signOutButton').addEventListener('click',async()=>{cloudSyncEnabled=false;clearInterval(cloudPollTimer);await supabaseClient.auth.signOut();cloudProfile=null;document.body.classList.remove('values-restricted','loans-only');document.getElementById('dashboardApp').classList.add('hidden');document.getElementById('authScreen').classList.remove('hidden');});
     document.addEventListener('click',e=>{if(!e.target.closest('#changeOwnPasswordOpen'))return;const form=document.getElementById('ownPasswordForm'),msg=document.getElementById('ownPasswordMessage');form.reset();msg.textContent='';msg.classList.remove('text-emerald-300');msg.classList.add('text-rose-300');document.getElementById('ownPasswordDialog').showModal();});
